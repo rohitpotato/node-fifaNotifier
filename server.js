@@ -61,28 +61,18 @@ const HourlyChecker = () => {
 	console.log("Hourly checker is running");
 
 	axios.get('https://api.fifa.com/api/v1/calendar/matches?idseason=254645&idcompetition=17&language=en-GB&count=100').then((res) => {
-
-/*	var dater = res.data.Results[0].LocalDate;
-
-	var dater = new Date(dater);
-	d = new Date();
-	return console.log(!(dater.setHours(0,0,0,0) == d.setHours(0,0,0,0)));*/
-
+		
 	var todayResults = res.data.Results.filter(function (resul) {
 
-		//return Date.parse(resul.LocalDate) == Date.now();
+		d = new Date();
+		d.setHours(5,30,0,0);
 
-			var dater = resul.LocalDate;
+		dater = new Date(resul.LocalDate);
+		dater = dater.setHours(0,0,0,0);
 
-			var dater = new Date(dater);
-			dater.setHours(0,0,0,0);
+		return dater >= d;
 
-			d = new Date();
-			d.setHours(0,0,0,0);
-
-			return dater == d;
-
-		});
+	});
 
 		logToFile(todayResults);
 
@@ -91,14 +81,14 @@ const HourlyChecker = () => {
 			var team1 = todayResults[0].Home.TeamName[0].Description;
 			var team2 = todayResults[0].Away.TeamName[0].Description;
 
-			var HomeScore = todayResults[0].Home.Score;
-			var AwayScore = todayResults[0].Home.Score;
+			var HomeScore = todayResults[0].Home.Score == null ? '0' : todayResults[0].Home.Score;
+			var AwayScore = todayResults[0].Away.Score == null ? '0' : todayResults[0].Away.Score;
 
-			var message = `Today's match is between ${team1} and ${team2} and the current score is ${HomeScore}-${AwayScorea}. Stay tuned`;
-
+			var message = `Today's match is between ${team1} and ${team2} and the current score is ${HomeScore}-${AwayScore}. Stay tuned`;
+			console.log(message);
 			sendSms(message);
 
-			console.log(todayResults[todayResults.length - 1]);
+			//console.log(todayResults[todayResults.length - 1]);
 
 		}  else {
 
